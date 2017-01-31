@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jboss.test</groupId>
-    <artifactId>elytron-anonymous-jms-client</artifactId>
+    <artifactId>elytron-jbeap-8585</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.org.wildfly>11.0.0.Alpha1-SNAPSHOT</version.org.wildfly>
-        <version.org.jboss.modules.jboss-modules>1.6.0.Beta4</version.org.jboss.modules.jboss-modules>
+        <version.org.jboss.eap>7.1.0.Alpha1-redhat-12</version.org.jboss.eap>
+        <version.org.jboss.modules.jboss-modules>1.6.0.Beta4-redhat-1</version.org.jboss.modules.jboss-modules>
         <main.class>org.wildfly.security.elytron.demo.JmsClient</main.class>
     </properties>
 
@@ -64,9 +64,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.jboss.eap</groupId>
             <artifactId>wildfly-jms-client-bom</artifactId>
-            <version>${version.org.wildfly}</version>
+            <version>${version.org.jboss.eap}</version>
             <type>pom</type>
         </dependency>
         <!-- workaround for https://issues.jboss.org/browse/JBEAP-7282 -->
