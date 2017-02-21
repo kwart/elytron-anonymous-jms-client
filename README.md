@@ -63,4 +63,4 @@ $JBOSS_HOME/bin/standalone.sh -c standalone-full.xml
 mvn clean package exec:java
 ```
 
-If the client execution fails on a `NullPointerException`, check if the issue [JBEAP-8047](https://issues.jboss.org/browse/JBEAP-8047)/[ELY-896](https://issues.jboss.org/browse/ELY-896) is fixed already in your WildFly version.
+If the client execution fails on a `InvocationTargetException`, check if the issue [WFLY-8183](https://issues.jboss.org/browse/WFLY-8183) is fixed already in your WildFly version.
