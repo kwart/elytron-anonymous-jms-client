@@ -4,7 +4,7 @@ This demo shows how to use use the `ANONYMOUS` SASL authentication mechanism fro
 
 We want to send a message from JMS client without authentication, so we want to allow anonymous access and grant `"guest"` role (used in messaging-activemq configuration) to incoming clients.
 
-[The client code](src/main/java/org/jboss/test/App.java) in this demo is based on [helloworld-jms](https://github.com/wildfly/quickstart/tree/11.x/helloworld-jms) WildFly quickstart.
+[The client code](src/main/java/org/wildfly/security/elytron/demo/JmsClient.java) in this demo is based on [helloworld-jms](https://github.com/wildfly/quickstart/tree/11.x/helloworld-jms) WildFly quickstart.
 
 ## Prerequisities
 
@@ -63,4 +63,4 @@ $JBOSS_HOME/bin/standalone.sh -c standalone-full.xml
 mvn clean package exec:java
 ```
 
-If the client execution fails on a `NullPointerException`, check if the issue [JBEAP-8047](https://issues.jboss.org/browse/JBEAP-8047)/[ELY-896](https://issues.jboss.org/browse/ELY-896) is fixed already in your WildFly version. 
+If the client execution fails on a `NullPointerException`, check if the issue [JBEAP-8047](https://issues.jboss.org/browse/JBEAP-8047)/[ELY-896](https://issues.jboss.org/browse/ELY-896) is fixed already in your WildFly version.
