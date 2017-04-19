@@ -26,7 +26,13 @@ embed-server --server-config=standalone-full.xml
 
 /core-service=management/management-interface=http-interface:write-attribute(name=http-upgrade.sasl-authentication-factory, value=kerberos-sasl-auth)
 
+/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=sasl-authentication-factory, value=kerberos-sasl-auth)
+/subsystem=remoting/http-connector=http-remoting-connector:undefine-attribute(name=security-realm)
+
 /subsystem=elytron/configurable-sasl-server-factory=configured:list-add(name=filters, value={pattern-filter=GSSAPI})
+
+/subsystem=messaging-activemq/server=default:undefine-attribute(name=security-domain)
+/subsystem=messaging-activemq/server=default:write-attribute(name=elytron-domain, value=ldap-security-domain)
 
 # add test queue
 jms-queue add --queue-address=testQueue --entries=queue/test,java:jboss/exported/jms/queue/test
