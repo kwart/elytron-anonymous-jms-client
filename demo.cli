@@ -1,32 +1,32 @@
 embed-server --server-config=standalone-full.xml
 
-# enable Elytron across the server
-/subsystem=undertow/application-security-domain=other:add(http-authentication-factory=application-http-authentication)
-/subsystem=ejb3/application-security-domain=other:add(security-domain=ApplicationDomain)
-/subsystem=batch-jberet:write-attribute(name=security-domain, value=ApplicationDomain)
-/subsystem=messaging-activemq/server=default:undefine-attribute(name=security-domain)
-/subsystem=messaging-activemq/server=default:write-attribute(name=elytron-domain, value=ApplicationDomain)
-/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=sasl-authentication-factory, value=application-sasl-authentication)
-/subsystem=remoting/http-connector=http-remoting-connector:undefine-attribute(name=security-realm)
-/core-service=management/access=identity:add(security-domain=ManagementDomain)
-/core-service=management/management-interface=http-interface:write-attribute(name=http-upgrade,value={enabled=true, sasl-authentication-factory=management-sasl-authentication})
-/core-service=management/management-interface=http-interface:write-attribute(name=http-authentication-factory,value=management-http-authentication)
-/core-service=management/management-interface=http-interface:undefine-attribute(name=security-realm)
-reload
-
-/core-service=management/security-realm=ManagementRealm:remove
-/core-service=management/security-realm=ApplicationRealm/authentication=local:remove
-/core-service=management/security-realm=ApplicationRealm/authentication=properties:remove
-/core-service=management/security-realm=ApplicationRealm/authorization=properties:remove
-reload
-
-# allow ANONYMOUS SASL mechanism
-/subsystem=elytron/configurable-sasl-server-factory=configured:list-add(name=filters, value={"pattern-filter" => "ANONYMOUS"}) 
-/subsystem=elytron/sasl-authentication-factory=application-sasl-authentication:list-add(name=mechanism-configurations, value={mechanism-name=ANONYMOUS})
-
-# add "guest" role mapper to ApplicationDomain
+/subsystem=elytron/dir-context=dir-context-localhost:add(url="ldap://127.0.0.1:10389",principal="uid=admin,ou=system",credential-reference={clear-text=secret})
+/subsystem=elytron/ldap-realm=ldap-realm-localhost:add(dir-context=dir-context-localhost,identity-mapping={rdn-identifier=krb5PrincipalName,search-base-dn="ou=Users,dc=jboss,dc=org"})
 /subsystem=elytron/constant-role-mapper=guest-role-mapper:add(roles=["guest"])
-/subsystem=elytron/security-domain=ApplicationDomain:write-attribute(name=role-mapper, value=guest-role-mapper)
+/subsystem=elytron/security-domain=ldap-security-domain:add( \
+  realms=[{realm=ldap-realm-localhost,role-decoder=groups-to-roles}], \
+  default-realm=ldap-realm-localhost, \
+  role-mapper=guest-role-mapper, \
+  permission-mapper=default-permission-mapper)
+
+/subsystem=elytron/kerberos-security-factory=krbRemote:add( \
+  principal="remote/localhost@JBOSS.ORG", \
+  path="/tmp/kerberos-using-apacheds/remote-localhost-remotepwd.keytab")
+
+/system-property=java.security.krb5.conf:add(value="/tmp/kerberos-using-apacheds/krb5.conf")
+/system-property=sun.security.krb5.debug:add(value="true")
+
+/subsystem=elytron/sasl-authentication-factory=kerberos-sasl-auth:add( \
+  sasl-server-factory=configured, \
+  security-domain=ldap-security-domain, \
+  mechanism-configurations=[{ \
+      mechanism-name=GSSAPI,\
+      mechanism-realm-configurations=[{ realm-name=ldap-realm-localhost }], \
+      credential-security-factory=krbRemote }])
+
+/core-service=management/management-interface=http-interface:write-attribute(name=http-upgrade.sasl-authentication-factory, value=kerberos-sasl-auth)
+
+/subsystem=elytron/configurable-sasl-server-factory=configured:list-add(name=filters, value={pattern-filter=GSSAPI})
 
 # add test queue
 jms-queue add --queue-address=testQueue --entries=queue/test,java:jboss/exported/jms/queue/test
