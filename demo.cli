@@ -1,5 +1,13 @@
 embed-server --server-config=standalone-full.xml
 
+# don't remove LoginPermission from anonymous users - this is a new piece of configuration comming after WildFly 11 Alpha1
+try
+  /subsystem=elytron/simple-permission-mapper=anonymous-permission-mapper:undefine-attribute(name=permission-mappings)
+catch
+  echo You have probably WildFly 11 Alpha1 instance, which doesn't have anonymous-permission-mapper in it's configuration.
+end-try
+
+
 # enable Elytron across the server
 /subsystem=undertow/application-security-domain=other:add(http-authentication-factory=application-http-authentication)
 /subsystem=ejb3/application-security-domain=other:add(security-domain=ApplicationDomain)
@@ -27,9 +35,6 @@ reload
 # add "guest" role mapper to ApplicationDomain
 /subsystem=elytron/constant-role-mapper=guest-role-mapper:add(roles=["guest"])
 /subsystem=elytron/security-domain=ApplicationDomain:write-attribute(name=role-mapper, value=guest-role-mapper)
-
-# don't remove LoginPermission from anonymous users
-/subsystem=elytron/simple-permission-mapper=anonymous-permission-mapper:undefine-attribute(name=permission-mappings)
 
 # add test queue
 jms-queue add --queue-address=testQueue --entries=queue/test,java:jboss/exported/jms/queue/test

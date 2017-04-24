@@ -10,7 +10,9 @@ We want to send a message from JMS client without authentication, so we want to 
 
 ### WildFly 11.x
 
-Until there is a public release of WildFly 11.x (e.g. Alpha1), you have to build the server yourself from sources:
+[Download](http://wildfly.org/downloads/) and install  WildFly 11.x.
+
+You can also build the server yourself:
 
 ```
 git clone https://github.com/wildfly/wildfly.git
@@ -20,13 +22,13 @@ cp -r dist/target/wildfly-11.*-SNAPSHOT /tmp/wildfly
 export JBOSS_HOME=/tmp/wildfly
 ``` 
 
-
 ## Configure the Application server
 
 The configuration JBoss CLI script [demo.cli](demo.cli) contains commands to configure the server:
 
 * enable Elytron across the server
 * allow `ANONYMOUS` SASL mechanism for remoting connections
+* remove part of Elytron configuration which is dropping `LoginPermission` from `anonymous` user
 * add "guest" role mapper to the ApplicationDomain Elytron security domain
 * add a test queue 
 
@@ -62,5 +64,3 @@ $JBOSS_HOME/bin/standalone.sh -c standalone-full.xml
 ```
 mvn clean package exec:java
 ```
-
-If the client execution fails on a `InvocationTargetException`, check if the issue [WFLY-8183](https://issues.jboss.org/browse/WFLY-8183) is fixed already in your WildFly version.
