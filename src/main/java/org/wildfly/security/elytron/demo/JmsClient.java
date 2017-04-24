@@ -9,6 +9,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.wildfly.security.auth.client.AuthenticationConfiguration;
+import org.wildfly.security.auth.client.AuthenticationContext;
+import org.wildfly.security.auth.client.MatchRule;
+
 /**
  * Simple JMS client which doesn't configure authentication info (username/password).
  */
@@ -16,9 +20,12 @@ public class JmsClient {
     // Set up all the default values
 
     public static void main(String[] args) {
-        doLookup("http-remoting://127.0.0.1:8080");
-        doLookup("remote://127.0.0.1:10567");
-        doLookup("remoting://127.0.0.1:10567");
+        AuthenticationContext.empty()
+                .with(MatchRule.ALL, AuthenticationConfiguration.EMPTY.useDefaultProviders().allowSaslMechanisms("ANONYMOUS"))
+                .run(() -> {
+                    doLookup("http-remoting://127.0.0.1:8080");
+                    doLookup("remote://127.0.0.1:10567");
+                });
     }
 
     private static void doLookup(final String providerUrl) {
