@@ -28,6 +28,9 @@ reload
 /subsystem=elytron/constant-role-mapper=guest-role-mapper:add(roles=["guest"])
 /subsystem=elytron/security-domain=ApplicationDomain:write-attribute(name=role-mapper, value=guest-role-mapper)
 
+# don't remove LoginPermission from anonymous users
+/subsystem=elytron/simple-permission-mapper=anonymous-permission-mapper:undefine-attribute(name=permission-mappings)
+
 # add test queue
 jms-queue add --queue-address=testQueue --entries=queue/test,java:jboss/exported/jms/queue/test
 stop-embedded-server
