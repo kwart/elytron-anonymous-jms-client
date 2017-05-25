@@ -5,6 +5,7 @@ This reproducer shows problem with using `AuthenticationContext` API.
 The client works when the configuration is specified in `wildfly-config.xml` on classpath. If the config file is removed and the same setting is configured by using `AuthenticationConfiguration`\ `AuthenticationContext` then client fails (as it does not use the correct SASL mechanism).
 
 ## How to run it
+* edit [pom.xml](pom.xml) - set correct path to JBoss EAP maven repository and fix update JMS client bom version in property `version.org.jboss.eap` (if necessary)
 * put the [standalone-full.xml](standalone-full.xml) configuration file to your server config directory (`standalone/configuration/")
 * start the profile
 ```bash

@@ -12,7 +12,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.org.wildfly>11.0.0.Alpha1</version.org.wildfly>
+<!--        
+        <version.org.wildfly>11.0.0.Beta1</version.org.wildfly>
+-->
+        <version.org.jboss.eap>7.1.0.Beta1-redhat-3</version.org.jboss.eap>
         <main.class>org.wildfly.security.elytron.demo.JmsClient</main.class>
     </properties>
 
@@ -62,10 +65,18 @@
     </build>
 
     <dependencies>
+<!--        
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-jms-client-bom</artifactId>
             <version>${version.org.wildfly}</version>
+            <type>pom</type>
+        </dependency>
+-->
+        <dependency>
+            <groupId>org.jboss.eap</groupId>
+            <artifactId>wildfly-jms-client-bom</artifactId>
+            <version>${version.org.jboss.eap}</version>
             <type>pom</type>
         </dependency>
         <dependency>
@@ -74,4 +85,11 @@
             <version>1.7.25</version>
         </dependency>
     </dependencies>
+    
+    <repositories>
+        <repository>
+            <id>eap71</id>
+            <url>file://${user.home}/test/710DR18/jboss-eap-7.1.0.Beta1-maven-repository/maven-repository/</url>
+        </repository>
+    </repositories>
 </project>
